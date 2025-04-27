@@ -127,13 +127,13 @@ Pada pendekatan **Content-Based Filtering**, model dikembangkan dengan memanfaat
 
 **Output rekomendasi:**
 
-| ISBN        | Title                                          | Author           | Publisher                | Similarity Score |
-|-------------|------------------------------------------------|------------------|---------------------------|------------------|
-| 0393045218  | The Mummies of Urumchi                         | E. J. W. Barber  | W. W. Norton & Company     | 1.00000          |
-| 033037401X  | Midwinter of the Spirit                        | Phil Rickman     | Pan Publishing            | 0.99991          |
-| 078624660X  | Fire Ice: A Novel from the Numa Files           | Clive Cussler    | Thorndike Press            | 0.99990          |
-| 0872960382  | The Sound of Thunder                           | Chu-yong Kim     | Si-sa-yong-o-sa            | 0.99989          |
-| 0316734500  | The Bookseller of Kabul                        | Asne Seierstad   | Little, Brown              | 0.99989          |
+| ISBN        | Title                    | Author            | Publisher                | Similarity Score |
+|-------------|--------------------------|-------------------|--------------------------|------------------|
+| 0393045218  | The Mummies of Urumchi   | E. J. W. Barber   | W. W. Norton & Company   | 1.00000          |
+| 3791535714  | Die SchildbÃ?Â¼rger.     | Erich KÃ?Â¤stner  | Dressler Verlag          | 0.99991          |
+| 033037401X  | Midwinter of the Spirit  | Phil Rickman      | Pan Publishing           | 0.99990          |
+| 0965813509  | The throne of bones      | Brian McNaughton  | Terminal Fright          | 0.99990          |
+| 0316734500  | The Bookseller of Kabul  | Asne Seierstad    | Little, Brown            | 0.99990          |
 
 **Kelebihan:**
 - Dapat memberikan rekomendasi berdasarkan konten tanpa bergantung pada interaksi pengguna lain.
@@ -159,13 +159,16 @@ Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative 
 
 **Output Rekomendasi:**
 
-| ISBN        | Book-Title                                              | Book-Author            | Year-Of-Publication | Publisher                   | Predicted-Rating |
-|-------------|----------------------------------------------------------|-------------------------|---------------------|------------------------------|------------------|
-| 0140067477  | The Tao of Pooh                                           | Benjamin Hoff           | 1983.0              | Penguin Books                | 7.71             |
-| 0671003755  | She's Come Undone (Oprah's Book Club (Paperback))         | Wally Lamb              | 1996.0              | Washington Square Press      | 7.22             |
-| 0064471047  | The Lion, the Witch, and the Wardrobe (The Chronicles...) | C. S. Lewis             | 1994.0              | HarperCollins                | 7.07             |
-| 044651652X  | The Bridges of Madison County                            | Robert James Waller     | 1992.0              | Warner Books                 | 6.99             |
-| 0385722435  | Ella Minnow Pea: A Novel in Letters                       | Mark Dunn               | 2002.0              | Anchor Books/Doubleday        | 6.93             |
+## Sample User ID: 11676
+
+| ISBN         | Book Title                                                   | Book Author         | Year of Publication | Publisher                 | Predicted Rating |
+|--------------|---------------------------------------------------------------|---------------------|---------------------|----------------------------|------------------|
+| 193156146X   | The Time Traveler's Wife                                       | Audrey Niffenegger  | 2003.0              | MacAdam/Cage Publishing    | 10.00            |
+| 0553582143   | Body of Lies                                                   | IRIS JOHANSEN       | 2003.0              | Bantam                    | 10.00            |
+| 0345413881   | Dr. Death (Alex Delaware Novels (Paperback))                   | Jonathan Kellerman  | 2001.0              | Ballantine Books           | 10.00            |
+| 0380720132   | The Mystery of the Cupboard (Indian in the Cupboard Adventures) | Lynne Reid Banks    | 1999.0              | HarperTrophy               | 9.99             |
+| 2253044903   | Le Parfum : Histoire d'un meurtrier                             | Patrick Süskind     | 1988.0              | LGF                        | 9.95             |
+
 
 **Kelebihan:**
 - Dapat menemukan hubungan tersembunyi antar item melalui pola rating pengguna.
@@ -209,9 +212,9 @@ Contoh evaluasi untuk buku input **"The Mummies of Urumchi"**:
 | Judul Buku yang Direkomendasikan                        | Relevan? |
 |:---------------------------------------------------------|:--------:|
 | The Mummies of Urumchi                                   | ✔️       |
-| Midwinter of the Spirit                                  | ✔️       |
-| Fire Ice: A Novel from the Numa Files                    | ✔️       |
-| The Sound of Thunder                                     | ✔️       |
+| Die SchildbÃ?Â¼rger.                                 | ✔️       |
+| Midwinter of the Spirit                | ✔️       |
+| The throne of bones                                  | ✔️       |
 | The Bookseller of Kabul                                  | ✔️       |
 
 - **Jumlah rekomendasi relevan**: 5 dari 5
