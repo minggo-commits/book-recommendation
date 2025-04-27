@@ -157,7 +157,7 @@ Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative 
 - Melatih model SVD terbaik pada data training.
 - Membuat fungsi untuk merekomendasikan buku berdasarkan prediksi rating tertinggi untuk pengguna tertentu.
 
-**Contoh Output Rekomendasi:**
+**Output Rekomendasi:**
 
 | ISBN        | Book-Title                                              | Book-Author            | Year-Of-Publication | Publisher                   | Predicted-Rating |
 |-------------|----------------------------------------------------------|-------------------------|---------------------|------------------------------|------------------|
