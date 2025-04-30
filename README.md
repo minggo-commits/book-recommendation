@@ -209,73 +209,83 @@ trainset, testset = train_test_split(data, test_size=0.2, random_state=42)
 
 ---
 
-# Modeling
-Pada tahap ini, sistem rekomendasi dikembangkan menggunakan dua pendekatan berbeda, yaitu Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan menghasilkan daftar rekomendasi Top-N buku untuk pengguna.
+# Modeling and Results
 
-## 1. Content-Based Filtering dengan Word2Vec
-Pada pendekatan **Content-Based Filtering**, model dikembangkan dengan memanfaatkan algoritma **Word2Vec** untuk membangun representasi vektor dari data buku. Data teks yang digunakan adalah gabungan dari kolom **Book-Title**, **Book-Author**, dan **Publisher**. Setiap buku kemudian direpresentasikan sebagai rata-rata vektor kata-kata pembentuknya.
+Pada tahap ini, sistem rekomendasi dikembangkan menggunakan dua pendekatan berbeda, yaitu **Content-Based Filtering** dan **Collaborative Filtering**. Setiap pendekatan menghasilkan daftar rekomendasi Top-N buku untuk pengguna, berdasarkan mekanisme kerja dan parameter model yang telah ditentukan.
 
-### Tahapan yang dilakukan
-- Menggabungkan `Book-Title`, `Book-Author`, dan `Publisher` menjadi satu kolom teks.
-- Tokenisasi teks menjadi daftar kata-kata.
-- Melatih model Word2Vec untuk menghasilkan vektor representasi setiap kata.
-- Menghitung vektor rata-rata dari kata-kata dalam judul buku sebagai representasi buku.
-- Menggunakan cosine similarity untuk mengukur kemiripan antar buku.
-- Memberikan rekomendasi Top-5 buku dengan skor kemiripan tertinggi terhadap input judul.
+---
 
-### Output rekomendasi
+## 1. Content-Based Filtering dengan Word2Vec dan Cosine Similarity
+
+Pada pendekatan **Content-Based Filtering**, sistem rekomendasi dibangun berdasarkan kemiripan konten antar buku. Representasi buku dibentuk menggunakan teknik **Word2Vec**, dan kemiripan antar buku dihitung menggunakan **cosine similarity**.
+
+### Cara Kerja Model
+
+- Menggabungkan teks dari kolom `Book-Title`, `Book-Author`, dan `Publisher` menjadi satu kolom teks gabungan.
+- Melakukan tokenisasi teks menjadi daftar kata.
+- Melatih model **Word2Vec** untuk menghasilkan vektor representasi tiap kata dengan parameter utama:
+  - `vector_size=100`: Dimensi vektor embedding.
+  - `window=5`: Ukuran jendela konteks.
+  - `min_count=1`: Kata dengan frekuensi minimal 1 disertakan.
+- Untuk setiap buku, menghasilkan vektor representasi dengan mengambil rata-rata vektor kata-katanya.
+- Mengukur kemiripan antar buku menggunakan **cosine similarity**.
+- Menyusun rekomendasi **Top-5** buku dengan skor cosine similarity tertinggi terhadap buku input.
+
+### Output Rekomendasi (Contoh)
 
 | ISBN        | Title                    | Author            | Publisher                | Similarity Score |
-|-------------|--------------------------|-------------------|--------------------------|------------------|
-| 0393045218  | The Mummies of Urumchi   | E. J. W. Barber   | W. W. Norton & Company   | 1.00000          |
-| 3791535714  | Die SchildbÃ?Â¼rger.     | Erich KÃ?Â¤stner  | Dressler Verlag          | 0.99991          |
-| 033037401X  | Midwinter of the Spirit  | Phil Rickman      | Pan Publishing           | 0.99990          |
-| 0965813509  | The throne of bones      | Brian McNaughton  | Terminal Fright          | 0.99990          |
-| 0316734500  | The Bookseller of Kabul  | Asne Seierstad    | Little, Brown            | 0.99990          |
+|-------------|---------------------------|-------------------|---------------------------|------------------|
+| 0393045218  | The Mummies of Urumchi     | E. J. W. Barber   | W. W. Norton & Company    | 1.00000          |
+| 3791535714  | Die Schildbürger           | Erich Kästner     | Dressler Verlag           | 0.99991          |
+| 033037401X  | Midwinter of the Spirit    | Phil Rickman      | Pan Publishing            | 0.99990          |
+| 0965813509  | The Throne of Bones        | Brian McNaughton  | Terminal Fright           | 0.99990          |
+| 0316734500  | The Bookseller of Kabul    | Asne Seierstad    | Little, Brown             | 0.99990          |
 
 ### Kelebihan
-- Dapat memberikan rekomendasi berdasarkan konten tanpa bergantung pada interaksi pengguna lain.
-- Cocok untuk skenario cold-start (buku baru).
+- Dapat memberikan rekomendasi hanya berdasarkan konten buku, tanpa bergantung pada data pengguna lain.
+- Cocok untuk mengatasi masalah **cold-start** pada buku baru.
 
 ### Kekurangan
-- Tidak dapat merekomendasikan buku yang sepenuhnya berbeda dari preferensi awal pengguna (cenderung sempit).
-- Membutuhkan representasi konten yang lengkap dan akurat.
+- Hanya dapat merekomendasikan buku yang mirip dengan buku yang sudah diketahui.
+- Kualitas rekomendasi bergantung pada kelengkapan dan akurasi metadata buku.
 
-
+---
 
 ## 2. Collaborative Filtering dengan SVD (Singular Value Decomposition)
 
-Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative Filtering** dengan teknik **Matrix Factorization** menggunakan algoritma **Singular Value Decomposition (SVD)**. Model ini memanfaatkan pola interaksi (rating) antara pengguna dan buku untuk memberikan rekomendasi.
+Pada pendekatan **Collaborative Filtering**, sistem rekomendasi dikembangkan menggunakan teknik **Matrix Factorization** dengan algoritma **Singular Value Decomposition (SVD)**. Model ini memanfaatkan pola interaksi (rating) antara pengguna dan item.
 
-### Tahapan yang dilakukan
-- Menggunakan library `Surprise` untuk memproses data rating.
-- Membuat `Dataset` dari dataframe `User-ID`, `ISBN`, dan `Book-Rating`.
-- Membagi data menjadi training dan testing set (80:20).
-- Melakukan **Grid Search** untuk menemukan kombinasi parameter terbaik (`n_factors`, `lr_all`, `reg_all`) berdasarkan nilai RMSE terendah.
-- Melatih model SVD terbaik pada data training.
-- Membuat fungsi untuk merekomendasikan buku berdasarkan prediksi rating tertinggi untuk pengguna tertentu.
+### Cara Kerja Model
 
-### Output Rekomendasi
+- Menggunakan library **Surprise** untuk memproses dataset `User-ID`, `ISBN`, dan `Book-Rating`.
+- Membagi dataset menjadi **trainset** dan **testset** dengan rasio 80:20.
+- Melakukan **Grid Search** untuk menemukan kombinasi parameter terbaik dengan evaluasi menggunakan **Root Mean Square Error (RMSE)**:
+  - `n_factors`: Jumlah faktor laten (eksperimen 50 dan 100).
+  - `lr_all`: Learning rate umum (eksperimen 0.005 dan 0.01).
+  - `reg_all`: Regularisasi umum (eksperimen 0.02 dan 0.1).
+- Melatih model **SVD** terbaik berdasarkan hasil Grid Search pada data training.
+- Menggunakan model terlatih untuk memprediksi rating buku yang belum pernah dibaca oleh pengguna.
+- Menyusun rekomendasi **Top-5** buku dengan prediksi rating tertinggi.
 
-### Sample User ID: 11676
+### Output Rekomendasi (Contoh)
+
+#### Sample User ID: 11676
 
 | ISBN         | Book Title                                                   | Book Author         | Year of Publication | Publisher                 | Predicted Rating |
 |--------------|---------------------------------------------------------------|---------------------|---------------------|----------------------------|------------------|
 | 193156146X   | The Time Traveler's Wife                                       | Audrey Niffenegger  | 2003.0              | MacAdam/Cage Publishing    | 10.00            |
-| 0553582143   | Body of Lies                                                   | IRIS JOHANSEN       | 2003.0              | Bantam                    | 10.00            |
+| 0553582143   | Body of Lies                                                   | Iris Johansen       | 2003.0              | Bantam                    | 10.00            |
 | 0345413881   | Dr. Death (Alex Delaware Novels (Paperback))                   | Jonathan Kellerman  | 2001.0              | Ballantine Books           | 10.00            |
 | 0380720132   | The Mystery of the Cupboard (Indian in the Cupboard Adventures) | Lynne Reid Banks    | 1999.0              | HarperTrophy               | 9.99             |
 | 2253044903   | Le Parfum : Histoire d'un meurtrier                             | Patrick Süskind     | 1988.0              | LGF                        | 9.95             |
 
-
 ### Kelebihan
-- Dapat menemukan hubungan tersembunyi antar item melalui pola rating pengguna.
-- Memberikan rekomendasi yang lebih beragam dibandingkan content-based.
-- Mampu menyarankan item yang tidak pernah berhubungan langsung dengan preferensi awal pengguna.
+- Dapat menemukan hubungan tersembunyi antar buku dari pola rating pengguna.
+- Memberikan rekomendasi lebih beragam dibandingkan content-based filtering.
 
-### Kekurangan 
-- Membutuhkan banyak data interaksi agar performa optimal.
-- Sulit mengatasi masalah cold-start (pengguna atau buku baru yang belum pernah dinilai).
+### Kekurangan
+- Membutuhkan data interaksi pengguna yang cukup banyak untuk performa optimal.
+- Kurang efektif pada kasus **cold-start** untuk pengguna baru atau buku baru.
 
 ---
 
