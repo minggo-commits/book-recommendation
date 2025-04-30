@@ -1,6 +1,6 @@
 # Laporan Proyek Machine Learning - Muh. Arsan Akbar
 
-## Project Overview
+# Project Overview
 Seiring dengan berkembangnya teknologi informasi, banyak aplikasi manajemen buku di perpustakaan kini telah menyediakan berbagai koleksi buku dalam format digital yang dapat diakses secara daring. Aksesibilitas ini mendorong kebutuhan akan fitur pencarian buku yang lebih cerdas, salah satunya melalui penerapan sistem rekomendasi. Sistem rekomendasi berfungsi untuk membantu pengguna menemukan buku yang sesuai dengan minat dan preferensi mereka, dengan cara memberikan saran berdasarkan masukan atau kriteria tertentu yang mereka tentukan. Seperti yang dijelaskan oleh Murti et al. (2019), sistem rekomendasi merupakan teknik yang bertujuan untuk menyarankan item pilihan yang paling relevan bagi pengguna.
 
 Contohnya, pada aplikasi E-Library di Perpustakaan Politeknik Negeri Banyuwangi, sistem pencarian telah dibangun untuk memudahkan pengguna dalam menemukan buku yang diinginkan. Namun, dalam praktiknya ditemukan bahwa akurasi pencarian terkadang kurang optimal. Misalnya, ketika pengguna mengetikkan kata kunci berupa judul lengkap sebuah buku, sistem tidak selalu mampu menampilkan hasil yang sesuai, bahkan menampilkan pesan "Data Kosong", padahal buku tersebut sebenarnya tersedia dalam basis data. Permasalahan ini menunjukkan pentingnya penggunaan metode atau algoritma pencarian yang lebih efektif untuk meningkatkan kinerja sistem rekomendasi (Sadesty Rahmadhani et al. 2024).
@@ -15,34 +15,35 @@ Referensi:
 
 ---
 
-## Business Understanding
-### Problem Statements
+# Business Understanding
+## Problem Statements
 - Berdasarkan data pengguna, bagaimana cara membangun sistem rekomendasi buku yang dipersonalisasi menggunakan teknik Content-Based Filtering?
 - Dengan memanfaatkan data rating yang tersedia, bagaimana sistem dapat merekomendasikan buku lain yang mungkin disukai oleh pengguna dan belum pernah mereka baca sebelumnya?
 
-### Goals
+## Goals
 - Menghasilkan rekomendasi buku yang dipersonalisasi sesuai preferensi pengguna menggunakan teknik Content-Based Filtering.
 - Menghasilkan rekomendasi buku yang sesuai dengan minat pengguna dan belum pernah dibaca sebelumnya menggunakan teknik Collaborative Filtering.
 
-### Solution Approach
-- **Content-Based Filtering:**
+## Solution Approach
+### Content-Based Filtering
 Pendekatan ini merekomendasikan buku berdasarkan kemiripan konten antara buku yang sudah diketahui disukai pengguna dengan buku lain dalam koleksi. Algoritma yang digunakan adalah Word2Vec untuk membangun representasi vektor dari fitur buku. Model kemudian dievaluasi dengan pendekatan perhitungan presisi secara manual untuk mengukur relevansi rekomendasi yang dihasilkan.
-- **Collaborative Filtering:**
+### Collaborative Filtering 
 Pendekatan ini merekomendasikan buku dengan memanfaatkan pola interaksi antar pengguna. Sistem akan mengidentifikasi pengguna lain yang memiliki pola perilaku serupa dan merekomendasikan buku-buku yang disukai oleh pengguna tersebut. Teknik yang digunakan adalah matrix factorization, khususnya metode Singular Value Decomposition (SVD), untuk memprediksi rating atau ketertarikan terhadap buku. Untuk mengoptimalkan model, dilakukan hyperparameter tuning menggunakan metode grid search, sehingga diperoleh kombinasi parameter terbaik. Evaluasi model dilakukan menggunakan metrik Root Mean Squared Error (RMSE) untuk mengukur akurasi prediksi rating.
+
 ---
 
-## Data Understanding
+# Data Understanding
 Dataset yang digunakan dalam proyek ini adalah Book-Crossing Dataset. Dataset ini berisi informasi tentang pengguna, buku, dan rating yang diberikan oleh pengguna terhadap buku. Dataset ini dapat diunduh melalui tautan berikut: 
 [Book-Crossing Dataset](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset?select=Ratings.csv) atau https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset?select=Ratings.csv
 
-**Jumlah data dan kondisinya:**
+## Jumlah data dan kondisinya
 - Dataset user berisi 278.858 data pengguna dengan 3 kolom, Kolom Age memiliki banyak nilai kosong (sekitar 40% data tidak tersedia).
 - Dataset book berisi 271.360 data buku dengan 8 kolom, terdapat beberapa missing value pada kolom Book-Author, Publisher, dan Image-URL-L.
 - Dataset ratings Berisi 1.149.780 data rating buku dengan 3 kolom dan tidak ditemukan missing value pada tabel ini.
 
 Dataset ini terdiri dari tiga tabel utama yakni Users, Books, dan Ratings, yang saling berelasi melalui User-ID dan ISBN.
 
-**Variabel pada dataset**
+## Variabel pada dataset
 
 | Dataset  | Variabel              | Deskripsi |
 |:---------|:----------------------|:----------|
@@ -61,9 +62,9 @@ Dataset ini terdiri dari tiga tabel utama yakni Users, Books, dan Ratings, yang 
 |          | ISBN                   | ISBN buku yang dinilai. |
 |          | Book-Rating            | Rating yang diberikan (0 untuk implicit, 1-10 untuk explicit rating). |
 
-### Exploratory Data Analysis (EDA) - Univariate Exploratory Data Analysis
+# Exploratory Data Analysis (EDA) - Univariate Exploratory Data Analysis
 
-**Dataset Buku**
+## Dataset Buku
 - Variabel ISBN merupakan kode unik yang digunakan untuk mengidentifikasi setiap buku secara individual. Dalam dataset ini, seluruh 271.360 baris memiliki nilai ISBN yang unik tanpa nilai kosong.
 - Variabel Book Title merupakan judul buku. Dari 271.360 data, terdapat 242.135 judul unik, menunjukkan adanya beberapa buku yang memiliki judul yang sama (kemungkinan edisi berbeda atau re-publish). Judul yang paling sering muncul antara lain Selected Poems, Little Women, dan Wuthering Heights.
 - Variabel Book Author menampilkan nama penulis dari setiap buku. Terdapat 102.022 penulis unik dan hanya 2 nilai yang hilang. Penulis yang paling sering muncul dalam dataset ini adalah Agatha Christie, William Shakespeare, dan Stephen King, yang masing-masing memiliki ratusan judul.
@@ -71,17 +72,17 @@ Dataset ini terdiri dari tiga tabel utama yakni Users, Books, dan Ratings, yang 
 - Variabel Publisher menunjukkan penerbit buku. Terdapat 16.807 penerbit unik dengan hanya 2 data yang hilang. Beberapa penerbit yang paling banyak muncul adalah Harlequin, Silhouette, dan Pocket.
 - Variabel Image URL merupakan URL gambar sampul buku dalam tiga ukuran berbeda. Kolom ini tidak memiliki nilai kosong, kecuali Image-URL-L yang memiliki 3 missing value. Data ini bersifat pelengkap dan tidak terlalu dibutuhkan untuk sistem rekomendasi ini.
 
-**Dataset Pengguna**
+## Dataset Pengguna
 - Variabel User-ID terdapat 278.858 nilai unik pada kolom User-ID, menandakan bahwa setiap pengguna dalam dataset bersifat unik. Tidak ditemukan nilai yang hilang pada kolom ini.
 - Variabel Location terdapat 57.339 lokasi unik dalam kolom Location, yang menunjukkan keragaman geografis pengguna. Lokasi yang paling sering muncul adalah London, England, United Kingdom sebanyak 2.506 kali, diikuti oleh Toronto, Ontario, Canada dan Sydney, New South Wales, Australia. Tidak terdapat data yang hilang pada kolom ini.
 - Variabel Age, Dari total data, hanya 168.096 (sekitar 60%) yang memiliki nilai usia. Rata-rata usia pengguna adalah sekitar 35 tahun dengan simpangan baku 14,43 tahun. Terdapat nilai ekstrim seperti usia minimum 0 tahun dan maksimum 244 tahun yang kemungkinan merupakan kesalahan input atau outlier.
 
-**Dataset Rating**
+## Dataset Rating
 - Variabel User-ID terdapat 105.283 pengguna unik dalam dataset ini, dan tidak ditemukan nilai yang hilang pada kolom User-ID.
 - Variabel ISBN, jumlah ISBN unik yang tercatat adalah 340.556. ISBN yang paling sering muncul adalah 0971880107 sebanyak 2.502 kali, diikuti oleh 0316666343 sebanyak 1.295 kali. Tidak ada nilai kosong pada kolom ini.
 - Variabel Book Rating memiliki 1.149.780 entri dengan nilai rata-rata 2.87 dan standar deviasi sebesar 3.85. Nilai rating berkisar antara 0 hingga 10. Sebanyak 716.109 entri (sekitar 62%) memiliki rating 0, yang biasanya menandakan tidak ada rating yang diberikan. Rating 10 muncul sebanyak 78.610 kali, menunjukkan sejumlah pengguna memberikan skor maksimal. Distribusi lainnya menunjukkan peningkatan jumlah data seiring naiknya rating, terutama dari nilai 5 hingga 8.
 
-**Beberapa Variabel yang perlu perbaikan**
+## Beberapa Variabel yang perlu perbaikan
 
 | Dataset          | Variabel               | Masalah Ditemukan                                | Tindakan Preprocessing                                 |
 |------------------|------------------------|--------------------------------------------------|--------------------------------------------------------|
@@ -94,15 +95,112 @@ Dataset ini terdiri dari tiga tabel utama yakni Users, Books, dan Ratings, yang 
 
 --------------------------------------------------------------------------------
 
-## Data Preparation
-Pada tahap ini dilakukan serangkaian proses pembersihan dan penyiapan data sebelum masuk ke tahap pemodelan. Berikut adalah langkah-langkah data preparation yang dilakukan, beserta alasan di balik setiap tahapan:
-- Menghapus data buku yang memiliki judul sama untuk menghindari duplikasi yang dapat mempengaruhi hasil rekomendasi. Duplikasi dapat menyebabkan bias dalam proses training model.
-- Menghapus data yang tidak memiliki informasi Book-Author atau Publisher, karena kedua atribut ini merupakan informasi penting untuk keakuratan sistem rekomendasi berbasis konten.
-- Menghapus kolom URL gambar yang tidak diperlukan dalam proses pemodelan, sehingga data menjadi lebih ringan dan fokus pada fitur yang relevan.
-- Nilai tahun terbit 0 atau lebih dari tahun 2025 dianggap tidak valid, sehingga diganti dengan nilai NaN, kemudian diisi dengan median dari tahun publikasi yang valid. Ini bertujuan untuk menjaga konsistensi dan realisme data.
-- Usia di bawah 5 tahun atau di atas 100 tahun dianggap tidak realistis untuk pengguna perpustakaan online. Data usia yang tidak valid ini diganti dengan NaN, lalu diisi menggunakan median usia agar tetap representatif terhadap populasi pengguna.
+# Data Preparation
 
-**Hasil Setelah Data Preparation**
+Pada tahap ini dilakukan serangkaian proses pembersihan dan penyiapan data sebelum masuk ke tahap pemodelan. Data preparation penting untuk memastikan data yang digunakan sudah bersih, konsisten, relevan, dan siap mendukung performa model. Berikut langkah-langkah data preparation yang dilakukan:
+
+## Handling Missing Value
+
+### Book-Author dan Publisher
+
+Baris data yang memiliki nilai kosong pada kolom `Book-Author` atau `Publisher` dihapus, karena kedua atribut ini mengandung informasi penting yang digunakan dalam sistem rekomendasi berbasis konten. Kehilangan informasi ini dapat menyebabkan penurunan akurasi rekomendasi.
+
+```python
+book = book[book['Book-Author'].notnull()]
+book = book[book['Publisher'].notnull()]
+```
+
+### Year-Of-Publication
+
+Nilai `Year-Of-Publication` yang tidak valid (bernilai 0 atau lebih dari 2025) diganti dengan `NaN`, lalu diisi menggunakan median tahun publikasi yang valid. Hal ini dilakukan untuk menjaga konsistensi data dan menghindari bias pada fitur tahun terbit yang dapat mempengaruhi kualitas rekomendasi.
+
+```python
+book.loc[(book['Year-Of-Publication'] == 0) | (book['Year-Of-Publication'] > 2025), 'Year-Of-Publication'] = np.nan
+median_year = book['Year-Of-Publication'].median()
+book['Year-Of-Publication'].fillna(median_year, inplace=True)
+```
+
+### Age
+
+Data pengguna dengan `Age` di bawah 5 tahun atau di atas 100 tahun dianggap tidak realistis dan dapat menjadi outlier yang merusak analisis. Oleh karena itu, nilai yang tidak masuk akal diganti menjadi `NaN`, kemudian diisi dengan median usia agar distribusi umur pengguna tetap representatif.
+
+```python
+user.loc[(user['Age'] < 5) | (user['Age'] > 100), 'Age'] = np.nan
+median_age = user['Age'].median()
+user['Age'].fillna(median_age, inplace=True)
+```
+
+## Handling Duplicates
+
+### Book-Title
+
+Duplikasi data berdasarkan `Book-Title` dapat menyebabkan bias dalam proses training model, seperti pemberian bobot lebih terhadap buku tertentu. Oleh karena itu, dilakukan penghapusan data duplikat agar sistem rekomendasi tidak berat sebelah.
+
+```python
+book = book.drop_duplicates(subset=['Book-Title']).reset_index(drop=True)
+```
+
+## Feature Reduction
+
+### Penghapusan Kolom Gambar
+
+Kolom `Image-URL-S`, `Image-URL-M`, dan `Image-URL-L` tidak digunakan dalam proses pemodelan berbasis teks dan rating. Menghapus fitur yang tidak relevan membantu mengurangi noise dan mempercepat proses training model.
+
+```python
+book.drop(['Image-URL-S', 'Image-URL-M', 'Image-URL-L'], axis=1, inplace=True)
+```
+
+# Content-Based Filtering Preparation
+
+## Ekstraksi Fitur Text Data
+
+Untuk pendekatan content-based filtering, diperlukan representasi teks dari buku. Oleh karena itu, kolom `Book-Title`, `Book-Author`, dan `Publisher` digabungkan menjadi satu kolom `text_data`, yang nantinya diolah lebih lanjut menggunakan teknik pembelajaran representasi teks.
+
+```python
+text_data = book['Book-Title'] + ' ' + book['Book-Author'] + ' ' + book['Publisher']
+```
+
+## Tokenisasi dan Training Word2Vec
+
+Model Word2Vec dilatih menggunakan data tokenisasi `text_data`. Word2Vec membantu merepresentasikan teks dalam bentuk vektor numerik yang menangkap hubungan semantik antar kata, sehingga model rekomendasi dapat memahami konteks konten lebih baik.
+
+```python
+sentences = [text.split() for text in text_data]
+model = Word2Vec(sentences, vector_size=100, window=5, min_count=1)
+```
+
+# Collaborative Filtering Preparation
+
+## Filter Data Ratings
+
+Filtering data rating dilakukan untuk memastikan bahwa hanya data yang cukup sering muncul yang digunakan dalam training. User atau buku dengan sedikit rating kurang memberikan informasi berguna untuk membangun model collaborative filtering yang andal.
+
+```python
+filtered_ratings = rating[
+    (rating['User-ID'].isin(rating['User-ID'].value_counts()[rating['User-ID'].value_counts() > 20].index)) &
+    (rating['ISBN'].isin(rating['ISBN'].value_counts()[rating['ISBN'].value_counts() > 20].index))
+]
+```
+
+## Encode Label
+
+Data rating perlu dikonversi ke dalam format standar yang bisa diproses oleh library rekomendasi (dalam hal ini Surprise). Encoding label memastikan bahwa `User-ID` dan `ISBN` dalam format numerik, dan skala rating didefinisikan dengan benar (0-10).
+
+```python
+reader = Reader(rating_scale=(0, 10))
+data = Dataset.load_from_df(filtered_ratings[['User-ID', 'ISBN', 'Book-Rating']], reader)
+```
+
+## Split Data
+
+Data dibagi menjadi set pelatihan (`trainset`) dan pengujian (`testset`) untuk memungkinkan validasi model secara objektif. Dengan memisahkan data, kita dapat mengevaluasi performa model terhadap data yang belum pernah dilihat sebelumnya.
+
+```python
+trainset, testset = train_test_split(data, test_size=0.2, random_state=42)
+```
+
+
+## Hasil Setelah Data Preparation
 
 | Dataset        | Jumlah Data | Fitur                                           | Keterangan                                      |
 |----------------|-------------|-------------------------------------------------|-------------------------------------------------|
@@ -111,13 +209,13 @@ Pada tahap ini dilakukan serangkaian proses pembersihan dan penyiapan data sebel
 
 ---
 
-## Modeling
+# Modeling
 Pada tahap ini, sistem rekomendasi dikembangkan menggunakan dua pendekatan berbeda, yaitu Content-Based Filtering dan Collaborative Filtering. Masing-masing pendekatan menghasilkan daftar rekomendasi Top-N buku untuk pengguna.
 
-### 1. Content-Based Filtering dengan Word2Vec
+## 1. Content-Based Filtering dengan Word2Vec
 Pada pendekatan **Content-Based Filtering**, model dikembangkan dengan memanfaatkan algoritma **Word2Vec** untuk membangun representasi vektor dari data buku. Data teks yang digunakan adalah gabungan dari kolom **Book-Title**, **Book-Author**, dan **Publisher**. Setiap buku kemudian direpresentasikan sebagai rata-rata vektor kata-kata pembentuknya.
 
-**Tahapan yang dilakukan:**
+### Tahapan yang dilakukan
 - Menggabungkan `Book-Title`, `Book-Author`, dan `Publisher` menjadi satu kolom teks.
 - Tokenisasi teks menjadi daftar kata-kata.
 - Melatih model Word2Vec untuk menghasilkan vektor representasi setiap kata.
@@ -125,7 +223,7 @@ Pada pendekatan **Content-Based Filtering**, model dikembangkan dengan memanfaat
 - Menggunakan cosine similarity untuk mengukur kemiripan antar buku.
 - Memberikan rekomendasi Top-5 buku dengan skor kemiripan tertinggi terhadap input judul.
 
-**Output rekomendasi:**
+### Output rekomendasi
 
 | ISBN        | Title                    | Author            | Publisher                | Similarity Score |
 |-------------|--------------------------|-------------------|--------------------------|------------------|
@@ -135,21 +233,21 @@ Pada pendekatan **Content-Based Filtering**, model dikembangkan dengan memanfaat
 | 0965813509  | The throne of bones      | Brian McNaughton  | Terminal Fright          | 0.99990          |
 | 0316734500  | The Bookseller of Kabul  | Asne Seierstad    | Little, Brown            | 0.99990          |
 
-**Kelebihan:**
+### Kelebihan
 - Dapat memberikan rekomendasi berdasarkan konten tanpa bergantung pada interaksi pengguna lain.
 - Cocok untuk skenario cold-start (buku baru).
 
-**Kekurangan:**
+### Kekurangan
 - Tidak dapat merekomendasikan buku yang sepenuhnya berbeda dari preferensi awal pengguna (cenderung sempit).
 - Membutuhkan representasi konten yang lengkap dan akurat.
 
 
 
-### 2. Collaborative Filtering dengan SVD (Singular Value Decomposition)
+## 2. Collaborative Filtering dengan SVD (Singular Value Decomposition)
 
 Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative Filtering** dengan teknik **Matrix Factorization** menggunakan algoritma **Singular Value Decomposition (SVD)**. Model ini memanfaatkan pola interaksi (rating) antara pengguna dan buku untuk memberikan rekomendasi.
 
-**Tahapan yang dilakukan:**
+### Tahapan yang dilakukan
 - Menggunakan library `Surprise` untuk memproses data rating.
 - Membuat `Dataset` dari dataframe `User-ID`, `ISBN`, dan `Book-Rating`.
 - Membagi data menjadi training dan testing set (80:20).
@@ -157,9 +255,9 @@ Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative 
 - Melatih model SVD terbaik pada data training.
 - Membuat fungsi untuk merekomendasikan buku berdasarkan prediksi rating tertinggi untuk pengguna tertentu.
 
-**Output Rekomendasi:**
+### Output Rekomendasi
 
-## Sample User ID: 11676
+### Sample User ID: 11676
 
 | ISBN         | Book Title                                                   | Book Author         | Year of Publication | Publisher                 | Predicted Rating |
 |--------------|---------------------------------------------------------------|---------------------|---------------------|----------------------------|------------------|
@@ -170,26 +268,26 @@ Pada pendekatan kedua, dikembangkan sistem rekomendasi berbasis **Collaborative 
 | 2253044903   | Le Parfum : Histoire d'un meurtrier                             | Patrick Süskind     | 1988.0              | LGF                        | 9.95             |
 
 
-**Kelebihan:**
+### Kelebihan
 - Dapat menemukan hubungan tersembunyi antar item melalui pola rating pengguna.
 - Memberikan rekomendasi yang lebih beragam dibandingkan content-based.
 - Mampu menyarankan item yang tidak pernah berhubungan langsung dengan preferensi awal pengguna.
 
-**Kekurangan:**
+### Kekurangan 
 - Membutuhkan banyak data interaksi agar performa optimal.
 - Sulit mengatasi masalah cold-start (pengguna atau buku baru yang belum pernah dinilai).
 
 ---
 
-## Evaluasi
+# Evaluasi
 
 Pada tahap evaluasi ini, digunakan metrik yang sesuai dengan pendekatan masing-masing model rekomendasi.
 
-### 1. Evaluasi Content-Based Filtering (Word2Vec)
+## 1. Evaluasi Content-Based Filtering (Word2Vec)
 
 Pada model Content-Based Filtering menggunakan Word2Vec, dilakukan evaluasi dengan metode **Precision** secara manual. **Precision** digunakan untuk mengukur tingkat relevansi hasil rekomendasi berdasarkan penilaian manual.
 
-#### Metrik yang Digunakan: Precision (Manual Evaluation)
+### Metrik yang Digunakan: Precision (Manual Evaluation)
 
 **Formula Precision:**
 
@@ -200,12 +298,12 @@ Keterangan:
 - **Item relevan**: Item rekomendasi yang dinilai sesuai berdasarkan kesamaan konten (judul, penulis, atau penerbit).
 - **N**: Jumlah total rekomendasi yang dievaluasi.
 
-#### Metode Evaluasi:
+### Metode Evaluasi
 1. Mengambil 5 hasil rekomendasi teratas dari model Content-Based Filtering.
 2. Menilai secara manual kesesuaian setiap rekomendasi dengan input awal.
 3. Menghitung rasio jumlah rekomendasi relevan terhadap total rekomendasi.
 
-#### Hasil Evaluasi
+### Hasil Evaluasi
 
 Contoh evaluasi untuk buku input **"The Mummies of Urumchi"**:
 
@@ -220,11 +318,11 @@ Contoh evaluasi untuk buku input **"The Mummies of Urumchi"**:
 - **Jumlah rekomendasi relevan**: 5 dari 5
 - **Precision**: **100%**
 
-### 2. Evaluasi Collaborative Filtering (SVD)
+## 2. Evaluasi Collaborative Filtering (SVD)
 
 Pada model Collaborative Filtering menggunakan algoritma SVD (Singular Value Decomposition), digunakan metrik evaluasi **Root Mean Squared Error (RMSE)**.
 
-#### Metrik yang Digunakan: RMSE
+### Metrik yang Digunakan: RMSE
 
 **Formula RMSE:**
 
@@ -236,7 +334,7 @@ Keterangan:
 
 RMSE mengukur seberapa jauh prediksi model dari nilai aktual; semakin kecil RMSE, semakin baik performa model.
 
-#### Hasil Evaluasi
+### Hasil Evaluasi
 
 - **Best RMSE** dari hasil Grid Search: **3.486**.
 - Parameter terbaik yang diperoleh:
